@@ -61,6 +61,37 @@ export const sessionManager = (c: Context): SessionManager => ({
   }
 })
 
+export const extendSession: MiddlewareHandler = async (c: Context, next) => {
+  const session = sessionManager(c);
+
+  // Example key, replace with actual key or loop over expected keys
+  const keys = ['id_token', 'access_token', 'user', 'refresh_token'];
+
+  for (const key of keys) {
+    const value = await session.getSessionItem(key);
+    if (value) {
+      // Extend the cookie expiration time
+      const now = new Date()
+      const expires = new Date(now.getTime() + 15 * 60 * 1000)
+
+      const cookieOptions = {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Lax',
+        expires
+      } as const;
+
+      if (typeof value === "string") {
+        setCookie(c, key, value, cookieOptions)
+      } else {
+        setCookie(c, key, JSON.stringify(value), cookieOptions)
+      }
+    }
+  }
+
+  await next();
+};
+
 type Env = {
   Variables: {
     user: UserType
