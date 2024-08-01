@@ -3,10 +3,12 @@ import { logger } from "hono/logger";
 import { todosRoute } from "./routes/todos";
 import { serveStatic } from "hono/bun";
 import { authRoute } from "./routes/auth";
+import { extendSession } from "./kinde";
 
 const app = new Hono()
 
 app.use("*", logger())
+app.use("*", extendSession)
 
 const apiRoutes = app.basePath("/api")
   .route("/todos", todosRoute)

@@ -1,5 +1,5 @@
 import { createKindeServerClient, GrantType, type SessionManager, type UserType } from "@kinde-oss/kinde-typescript-sdk";
-import type { Context } from "hono";
+import type { Context, MiddlewareHandler } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 
@@ -18,32 +18,18 @@ export const sessionManager = (c: Context): SessionManager => ({
   async getSessionItem(key: string) {
     const result = getCookie(c, key)
 
-    // if (result) {
-    //   const now = new Date()
-    //   const expires = new Date(now.getTime() + 10 * 1000)
-
-    //   const cookieOptions = {
-    //     httpOnly: true, // so it cannot be accessed by js
-    //     secure: true, // for ssl connection
-    //     sameSite: "Lax", // to prevent cross-site forgery attacks 
-    //     expires
-    //   } as const;
-
-    //   setCookie(c, key, result, cookieOptions)
-    // }
-
     return result
   },
   async setSessionItem(key: string, value: unknown) {
 
     const now = new Date()
-    const expires = new Date(now.getTime() + 10 * 1000)
+    const expires = new Date(now.getTime() + 15 * 60 * 1000)
 
     const cookieOptions = {
       httpOnly: true, // so it cannot be accessed by js
       secure: true, // for ssl connection
       sameSite: "Lax", // to prevent cross-site forgery attacks 
-      // expires
+      expires
     } as const;
     if (typeof value === "string") {
       setCookie(c, key, value, cookieOptions)
@@ -98,24 +84,23 @@ type Env = {
   }
 }
 
+export const getUser = createMiddleware<Env>(async (c, next) => {
+  try {
+    const manager = sessionManager(c)
+    const isAuthenticated = await kindeClient.isAuthenticated(manager)
+    if (!isAuthenticated) {
+      return c.json({
+        error: "You're unauthorized",
+      }, 401)
+    }
 
-// export const getUser = createMiddleware<Env>(async (c, next) => {
-//   try {
-//     const manager = sessionManager(c)
-//     const isAuthenticated = await kindeClient.isAuthenticated(manager)
-//     if (!isAuthenticated) {
-//       return c.json({
-//         error: "You're unauthorized",
-//       }, 401)
-//     }
-
-//     const user = await kindeClient.getUserProfile(manager)
-//     c.set("user", user)
-//     await next()
-//   } catch (error) {
-//     console.error(error)
-//     return c.json({
-//       error: "You're unauthorized",
-//     }, 401)
-//   }
-// })
+    const user = await kindeClient.getUserProfile(manager)
+    c.set("user", user)
+    await next()
+  } catch (error) {
+    console.error(error)
+    return c.json({
+      error: "You're unauthorized",
+    }, 401)
+  }
+})
