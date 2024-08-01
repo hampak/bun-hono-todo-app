@@ -28,10 +28,13 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@server/*": [
+        "../server/*"
       ]
     }
   },
   "include": [
     "src"
-  ],
+  ]
 }

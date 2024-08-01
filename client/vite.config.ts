@@ -1,13 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from "path"
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    TanStackRouterVite()
+  ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dir, "./src"),
+      "@server": path.resolve(import.meta.dir, "../server"),
     },
   },
   // forward requests to localhost:3000 
