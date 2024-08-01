@@ -38,7 +38,7 @@ const fakeTodos: Todos[] = [
 ]
 
 export const todosRoute = new Hono()
-  .get("/", (c) => {
+  .get("/", async (c) => {
     return c.json({
       todos: fakeTodos
     }, 200)
