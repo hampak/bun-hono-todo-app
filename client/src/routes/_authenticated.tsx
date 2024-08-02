@@ -1,14 +1,6 @@
+import Login from "@/components/authentication/login"
 import { userQueryOptions } from "@/lib/api"
 import { createFileRoute, Outlet } from "@tanstack/react-router"
-
-const Login = () => {
-  return (
-    <div>
-      <p>You have to login</p>
-      <a href="api/login">Login</a>
-    </div>
-  )
-}
 
 const Component = () => {
   const { user } = Route.useRouteContext()

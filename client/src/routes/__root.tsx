@@ -11,7 +11,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function Root() {
   return (
-    <div>
+    <div className="h-full w-full">
       <Outlet />
     </div>
   )

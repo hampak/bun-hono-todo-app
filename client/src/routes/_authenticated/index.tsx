@@ -1,43 +1,28 @@
-import { api } from '@/lib/api'
-import { useQuery } from '@tanstack/react-query'
+import { ListContainer } from '@/components/todos/list-container'
 import { createFileRoute } from '@tanstack/react-router'
-import { Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: Index
 })
 
 function Index() {
-  async function getAllTodos() {
-    const res = await api.todos.$get()
-    if (!res.ok) {
-      throw new Error("server error")
-    }
-    const data = res.json()
-    return data
-  }
 
-  const { data, isPending } = useQuery({
-    queryKey: ["get-all-todos"],
-    queryFn: getAllTodos
-  })
+  const fakeLists = [
+    {
+      id: 1,
+      title: "first list",
+      order: 1
+    },
+    {
+      id: 2,
+      title: "second list",
+      order: 2
+    }
+  ]
 
   return (
-    <div>
-      {isPending ? "Loading..." :
-        <>
-          {data?.todos.map((todo, index) => (
-            <div key={index}>
-              {todo.title}
-            </div>
-          ))}
-        </>
-      }
-      <Link
-        to="/about"
-      >
-        About page
-      </Link>
+    <div className="h-full bg-red-300s p-4 overflow-x-auto">
+      <ListContainer lists={fakeLists} />
     </div>
   )
 }
