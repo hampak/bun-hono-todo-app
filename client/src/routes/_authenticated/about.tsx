@@ -15,7 +15,7 @@ function About() {
 
   return (
     <div className="p-2">
-      <p>Hello {data.given_name}</p>
+      <p>Hello {data.user.given_name}</p>
       <a href="api/logout">Logout</a>
     </div>
   )
