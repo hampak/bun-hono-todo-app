@@ -33,7 +33,7 @@ export const listsRoute = new Hono()
       }, 201)
     } catch (error) {
       return c.json({
-        message: "Filed to create list"
+        message: "Failed to create list"
       }, 500)
     }
   })

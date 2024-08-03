@@ -1,8 +1,9 @@
 import { createListAction } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus } from "lucide-react";
-import { ElementRef, useRef, useState, useTransition } from "react";
+import { ElementRef, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useEventListener } from "usehooks-ts";
@@ -14,8 +15,9 @@ import { Input } from "../ui/input";
 
 export const CreateListForm = () => {
 
+  const queryClient = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  // const [isPending, startTransition] = useTransition()
 
   const formRef = useRef<ElementRef<"form">>(null)
   const inputRef = useRef<ElementRef<"input">>(null)
@@ -46,14 +48,39 @@ export const CreateListForm = () => {
     }
   }
 
+  // const mutation = useMutation(createListAction, {
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries()
+  //   }
+  // })
+  const { data, mutate: createList, isPending } = useMutation({
+    mutationKey: ['create-list'],
+    mutationFn: async ({ value }: { value: CreateList }) => {
+      return await createListAction({ value })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries()
+      toast.success(data?.message)
+    }
+  })
+  // const handleSubmit = async (value: CreateList) => {
+  //   startTransition(() => {
+  //     createListAction({ value })
+  //       .then(({ message }) => {
+  //         toast.success(message)
+  //       })
+  //   })
+  // }
+
   const handleSubmit = async (value: CreateList) => {
-    startTransition(() => {
-      createListAction({ value })
-        .then(({ message }) => {
-          toast.success(message)
-        })
-    })
+    try {
+      createList({ value })
+    } catch (e) {
+      console.log(e)
+      toast.error(data?.message)
+    }
   }
+
 
   useEventListener("keydown", onKeyDown)
 
