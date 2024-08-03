@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus } from "lucide-react";
-import { ElementRef, useRef, useState } from "react";
+import { ElementRef, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useEventListener } from "usehooks-ts";
@@ -17,7 +17,7 @@ export const CreateListForm = () => {
 
   const queryClient = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
-  // const [isPending, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
 
   const formRef = useRef<ElementRef<"form">>(null)
   const inputRef = useRef<ElementRef<"input">>(null)
@@ -53,14 +53,15 @@ export const CreateListForm = () => {
   //     queryClient.invalidateQueries()
   //   }
   // })
-  const { data, mutate: createList, isPending } = useMutation({
+  const { data, mutate: createList } = useMutation({
     mutationKey: ['create-list'],
     mutationFn: async ({ value }: { value: CreateList }) => {
       return await createListAction({ value })
     },
-    onSuccess: () => {
+    onSuccess: ({ message }) => {
       queryClient.invalidateQueries()
-      toast.success(data?.message)
+      toast.success(message)
+      disableEditing()
     }
   })
   // const handleSubmit = async (value: CreateList) => {
@@ -72,13 +73,10 @@ export const CreateListForm = () => {
   //   })
   // }
 
+  console.log(data)
+
   const handleSubmit = async (value: CreateList) => {
-    try {
-      createList({ value })
-    } catch (e) {
-      console.log(e)
-      toast.error(data?.message)
-    }
+    createList({ value })
   }
 
 
