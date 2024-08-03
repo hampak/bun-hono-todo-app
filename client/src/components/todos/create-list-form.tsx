@@ -6,8 +6,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { useEventListener } from "usehooks-ts";
-
-
+import { CreateList, createListSchema } from "../../../../server/sharedTypes"
+import { z } from "zod";
+import { createList } from "@/lib/api";
 
 
 export const CreateListForm = () => {
@@ -18,8 +19,8 @@ export const CreateListForm = () => {
   const formRef = useRef<ElementRef<"form">>(null)
   const inputRef = useRef<ElementRef<"input">>(null)
 
-  const form = useForm({
-    // resolver: zodResolver()
+  const form = useForm<z.infer<typeof createListSchema>>({
+    resolver: zodResolver(createListSchema),
     defaultValues: {
       title: ""
     }
@@ -38,14 +39,19 @@ export const CreateListForm = () => {
   }
 
 
-  const onKeyDown = (event: any) => {
+  const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
       disableEditing()
     }
   }
 
-  const createList = () => {
+  const handleSubmit = async ({ value }: { value: CreateList }) => {
+    startTransition(() => {
+      createList({ value })
+        .then(({ message }) => {
 
+        })
+    })
   }
 
   useEventListener("keydown", onKeyDown)
@@ -62,7 +68,7 @@ export const CreateListForm = () => {
             <Form {...form}>
               <form
                 className="w-full flex items-center"
-                onSubmit={form.handleSubmit(createList)}
+                onSubmit={form.handleSubmit(handleSubmit)}
                 ref={formRef}
               >
                 <div className="w-full relative">
@@ -108,7 +114,6 @@ export const CreateListForm = () => {
         ) : (
           <div className="w-full flex items-center justify-between space-x-2 px-3">
             <span>Create New List</span>
-            <Plus className="w-5 h-5" />
           </div>
         )
 

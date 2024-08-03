@@ -1,15 +1,14 @@
 import { index, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const todos = pgTable('todos', {
+export const lists = pgTable('lists', {
   id: serial('id').primaryKey(),
   userId: text("user_id").notNull(),
   title: text("title").notNull(),
-  description: text("description").notNull(),
   createdAt: timestamp("created_at").defaultNow()
 },
-  // (todos) => {
+  // (lists) => {
   //   return {
-  //     userIdIndex: index("name_idx").on(todos.userId)
+  //     userIdIndex: index("name_idx").on(lists.userId)
   //   }
   // }
 );
