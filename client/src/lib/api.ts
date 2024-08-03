@@ -2,7 +2,7 @@ import { type ApiRoutes } from "@server/app";
 import { queryOptions } from "@tanstack/react-query";
 import { hc } from "hono/client";
 // import { CreateListSchema } from "../../../server/sharedTypes"
-import { CreateList } from "@server/sharedTypes"
+import { CreateList } from "@server/sharedTypes";
 
 const client = hc<ApiRoutes>("/");
 
@@ -23,7 +23,14 @@ export const userQueryOptions = queryOptions({
   staleTime: Infinity,
 });
 
-export async function createList({ value }: { value: CreateList }) {
+// export function useCreateList({ value }: { value: CreateList }) {
+//   return useMutation({
+//     mutationKey: ["create-list"],
+//     mutationFn: async () => createListAction({ value })
+//   })
+// }
+
+export async function createListAction({ value }: { value: CreateList }) {
   // const res = await api.todos.$post({
   //   json: value
   // })
@@ -32,9 +39,9 @@ export async function createList({ value }: { value: CreateList }) {
   })
 
   if (!res.ok) {
-    throw new Error("server error")
+    return new Error("server error")
   }
 
-  const message = await res.json();
-  return message
+  const { message } = await res.json();
+  return { message }
 }

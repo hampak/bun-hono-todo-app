@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/sonner';
 import { type QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 
@@ -13,6 +14,7 @@ function Root() {
   return (
     <div className="h-full w-full">
       <Outlet />
+      <Toaster />
     </div>
   )
 }

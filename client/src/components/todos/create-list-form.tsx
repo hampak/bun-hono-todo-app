@@ -1,14 +1,15 @@
-import { cn } from "@/lib/utils"
-import { useRef, useState, useTransition, ElementRef } from "react"
-import { Loader2, Plus } from "lucide-react";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
-import { useForm } from "react-hook-form";
+import { createListAction } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../ui/input";
+import { Loader2, Plus } from "lucide-react";
+import { ElementRef, useRef, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { useEventListener } from "usehooks-ts";
-import { CreateList, createListSchema } from "../../../../server/sharedTypes"
 import { z } from "zod";
-import { createList } from "@/lib/api";
+import { CreateList, createListSchema } from "../../../../server/sharedTypes";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
+import { Input } from "../ui/input";
 
 
 export const CreateListForm = () => {
@@ -45,11 +46,11 @@ export const CreateListForm = () => {
     }
   }
 
-  const handleSubmit = async ({ value }: { value: CreateList }) => {
+  const handleSubmit = async (value: CreateList) => {
     startTransition(() => {
-      createList({ value })
+      createListAction({ value })
         .then(({ message }) => {
-
+          toast.success(message)
         })
     })
   }
