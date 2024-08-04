@@ -1,11 +1,9 @@
-import { createListAction, useCreateList } from "@/lib/actions";
+import { useCreateList } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus } from "lucide-react";
 import { ElementRef, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { useEventListener } from "usehooks-ts";
 import { z } from "zod";
 import { CreateList, createListSchema } from "../../../../server/sharedTypes";
@@ -15,9 +13,7 @@ import { Input } from "../ui/input";
 
 export const CreateListForm = () => {
 
-
   const [isEditing, setIsEditing] = useState(false)
-  const queryClient = useQueryClient()
   const formRef = useRef<ElementRef<"form">>(null)
   const inputRef = useRef<ElementRef<"input">>(null)
 
@@ -47,21 +43,6 @@ export const CreateListForm = () => {
     }
   }
 
-  // const { mutate: createList, isPending } = useMutation({
-  //   mutationKey: ['create-list'],
-  //   mutationFn: async ({ value }: { value: CreateList }) => {
-  //     return await createListAction({ value })
-  //   },
-  //   onSuccess: ({ message }) => {
-  //     queryClient.invalidateQueries()
-  //     toast.success(message)
-  //     disableEditing()
-  //   },
-  //   onError: ({ message }) => {
-  //     toast.error(message)
-  //   }
-  // })
-
   const { mutate: createList, isPending } = useCreateList({
     disableEditing: () => {
       setIsEditing(false)
@@ -74,7 +55,6 @@ export const CreateListForm = () => {
   }
 
   useEventListener("keydown", onKeyDown)
-
 
   return (
     <div
