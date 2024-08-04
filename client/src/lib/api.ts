@@ -23,13 +23,6 @@ export const userQueryOptions = queryOptions({
   staleTime: Infinity,
 });
 
-// export function useCreateList({ value }: { value: CreateList }) {
-//   return useMutation({
-//     mutationKey: ["create-list"],
-//     mutationFn: async () => createListAction({ value })
-//   })
-// }
-
 
 export async function createListAction({ value }: { value: CreateList }) {
   // const res = await api.todos.$post({

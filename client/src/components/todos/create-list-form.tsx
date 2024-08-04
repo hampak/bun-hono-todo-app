@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus } from "lucide-react";
-import { ElementRef, useRef, useState, useTransition } from "react";
+import { ElementRef, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useEventListener } from "usehooks-ts";
@@ -17,7 +17,6 @@ export const CreateListForm = () => {
 
   const queryClient = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
-  const [isPending, startTransition] = useTransition()
 
   const formRef = useRef<ElementRef<"form">>(null)
   const inputRef = useRef<ElementRef<"input">>(null)
@@ -48,12 +47,7 @@ export const CreateListForm = () => {
     }
   }
 
-  // const mutation = useMutation(createListAction, {
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries()
-  //   }
-  // })
-  const { data, mutate: createList } = useMutation({
+  const { mutate: createList, isPending } = useMutation({
     mutationKey: ['create-list'],
     mutationFn: async ({ value }: { value: CreateList }) => {
       return await createListAction({ value })
@@ -62,23 +56,15 @@ export const CreateListForm = () => {
       queryClient.invalidateQueries()
       toast.success(message)
       disableEditing()
+    },
+    onError: ({ message }) => {
+      toast.error(message)
     }
   })
-  // const handleSubmit = async (value: CreateList) => {
-  //   startTransition(() => {
-  //     createListAction({ value })
-  //       .then(({ message }) => {
-  //         toast.success(message)
-  //       })
-  //   })
-  // }
-
-  console.log(data)
 
   const handleSubmit = async (value: CreateList) => {
     createList({ value })
   }
-
 
   useEventListener("keydown", onKeyDown)
 
@@ -109,7 +95,7 @@ export const CreateListForm = () => {
                               {...field}
                               placeholder="name for new list"
                               className="pr-8"
-                              // disabled={isPending}
+                              disabled={isPending}
                               ref={inputRef}
                               onBlur={disableEditing}
                             />
