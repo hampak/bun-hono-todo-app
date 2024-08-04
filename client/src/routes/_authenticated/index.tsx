@@ -1,5 +1,7 @@
 import { ListContainer } from '@/components/todos/list-container'
+import { useGetLists } from '@/lib/actions'
 import { createFileRoute } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: Index
@@ -7,22 +9,19 @@ export const Route = createFileRoute('/_authenticated/')({
 
 function Index() {
 
-  const fakeLists = [
-    {
-      id: 1,
-      title: "first list",
-      order: 1
-    },
-    {
-      id: 2,
-      title: "second list",
-      order: 2
-    }
-  ]
+  const { data, isPending } = useGetLists()
+
+  console.log(data)
 
   return (
     <div className="h-full bg-red-300s p-4 overflow-x-auto">
-      <ListContainer lists={fakeLists} />
+      {
+        isPending ? (
+          <Loader2 className="w-6 h-6 animate-spin" />
+        ) : (
+          <ListContainer lists={data?.allLists} />
+        )
+      }
     </div>
   )
 }

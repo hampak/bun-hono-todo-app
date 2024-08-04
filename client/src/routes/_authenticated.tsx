@@ -4,7 +4,6 @@ import { createFileRoute, Outlet } from "@tanstack/react-router"
 
 const Component = () => {
   const { user } = Route.useRouteContext()
-  console.log(user)
   if (!user) {
     return <Login />
   }

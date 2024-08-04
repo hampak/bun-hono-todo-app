@@ -1,5 +1,5 @@
 import { CreateList } from "@server/sharedTypes";
-import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "./api";
 import { toast } from "sonner";
 
@@ -47,6 +47,30 @@ export function useCreateList(options: {
     },
     onError: ({ message }) => {
       toast.error(message)
+    }
+  })
+}
+
+export function useGetLists() {
+  return useQuery({
+    queryKey: ["get-list"],
+    queryFn: async () => {
+      const res = await api.lists.$get()
+
+      if (!res.ok) {
+        throw new Error("Server error")
+      }
+
+      const { lists } = await res.json()
+
+      const allLists = lists.map(list => ({
+        ...list,
+        createdAt: list.createdAt ? new Date(list.createdAt) : null
+      }))
+
+      return {
+        allLists
+      }
     }
   })
 }
