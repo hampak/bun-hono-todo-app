@@ -1,6 +1,7 @@
 import { CreateList } from "@server/sharedTypes";
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "./api";
+import { toast } from "sonner";
 
 async function getCurrentUser() {
   const res = await api.me.$get();
@@ -17,43 +18,35 @@ export const userQueryOptions = queryOptions({
   staleTime: Infinity,
 });
 
+export function useCreateList(options: {
+  disableEditing?: () => void;
+  onSuccess?: () => void;
+  onError?: () => void
+}) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationKey: ["create-list"],
+    mutationFn: async ({ value }: { value: CreateList }) => {
+      const res = await api.lists.$post({
+        json: value
+      })
 
-export async function createListAction({ value }: { value: CreateList }) {
-  const res = await api.lists.$post({
-    json: value
+      if (!res.ok) {
+        throw new Error("server error")
+      }
+
+      const { message } = await res.json();
+      return { message }
+    },
+    onSuccess: ({ message }) => {
+      toast.success(message)
+      queryClient.invalidateQueries()
+      if (options.disableEditing) {
+        options.disableEditing()
+      }
+    },
+    onError: ({ message }) => {
+      toast.error(message)
+    }
   })
-
-  if (!res.ok) {
-    return new Error("server error")
-  }
-
-  const { message } = await res.json();
-  return { message }
 }
-
-// export function useCreateList(disableEditing: { disableEditing: () => void }) {
-//   const queryClient = useQueryClient()
-//   return useMutation({
-//     mutationKey: ["create-list"],
-//     mutationFn: async ({ value }: { value: CreateList }) => {
-//       const res = await api.lists.$post({
-//         json: value
-//       })
-
-//       if (!res.ok) {
-//         throw new Error("server error")
-//       }
-
-//       const { message } = await res.json();
-//       return { message }
-//     },
-//     onSuccess: ({ message }) => {
-//       toast.success(message)
-//       queryClient.invalidateQueries()
-//       disableEditing()
-//     },
-//     onError: ({ message }) => {
-//       toast.error(message)
-//     }
-//   })
-// }

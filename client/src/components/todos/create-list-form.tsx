@@ -1,4 +1,4 @@
-import { createListAction } from "@/lib/actions";
+import { createListAction, useCreateList } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -47,18 +47,25 @@ export const CreateListForm = () => {
     }
   }
 
-  const { mutate: createList, isPending } = useMutation({
-    mutationKey: ['create-list'],
-    mutationFn: async ({ value }: { value: CreateList }) => {
-      return await createListAction({ value })
-    },
-    onSuccess: ({ message }) => {
-      queryClient.invalidateQueries()
-      toast.success(message)
-      disableEditing()
-    },
-    onError: ({ message }) => {
-      toast.error(message)
+  // const { mutate: createList, isPending } = useMutation({
+  //   mutationKey: ['create-list'],
+  //   mutationFn: async ({ value }: { value: CreateList }) => {
+  //     return await createListAction({ value })
+  //   },
+  //   onSuccess: ({ message }) => {
+  //     queryClient.invalidateQueries()
+  //     toast.success(message)
+  //     disableEditing()
+  //   },
+  //   onError: ({ message }) => {
+  //     toast.error(message)
+  //   }
+  // })
+
+  const { mutate: createList, isPending } = useCreateList({
+    disableEditing: () => {
+      setIsEditing(false)
+      form.reset()
     }
   })
 
