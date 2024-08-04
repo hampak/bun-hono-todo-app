@@ -9,6 +9,7 @@ import { z } from "zod";
 import { CreateList, createListSchema } from "../../../../server/sharedTypes";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 
 export const CreateListForm = () => {
@@ -58,18 +59,23 @@ export const CreateListForm = () => {
 
   return (
     <div
-      className={cn("w-60 py-2 flex justify-center items-center rounded-lg cursor-pointer transition-all select-none shrink-0 bg-gray-100 hover:bg-gray-100/50 h-max")}
+      className={cn(
+        !isEditing ? (
+          "w-60 py-2 flex justify-center items-center rounded-lg cursor-pointer transition-all select-none shrink-0 bg-gray-100 hover:bg-gray-100/50 h-max"
+        ) : (
+          "w-60 py-2 flex justify-center items-center rounded-lg cursor-pointer transition-all select-none shrink-0 bg-gray-100 h-max"
+        )
+      )}
       onClick={enableEditing}
     >
       {
         isEditing ? (
-          <div className="w-full h-full flex items-center px-1 shrink-0">
+          <div className="w-full h-full flex flex-col items-center px-1 shrink-0">
             <Form {...form}>
               <form
-                className="w-full flex items-center relative"
+                className="w-full flex flex-col items-center space-y-2"
                 onSubmit={form.handleSubmit(handleSubmit)}
                 ref={formRef}
-              // onBlur={disableEditing}
               >
                 <div className="w-full">
                   <FormField
@@ -94,10 +100,11 @@ export const CreateListForm = () => {
                     )}
                   />
                 </div>
-                <button
-                  className="absolute right-2 top-2.5 text-black hover:text-gray-500 transition-all"
+                <Button
+                  className="text-white bg-gray-900 hover:bg-gray-700 transition-all w-full"
                   type="submit"
-                // disabled={isLoading}
+                  disabled={isPending}
+                  size="xs"
                 >
                   {
                     isPending ? (
@@ -106,7 +113,20 @@ export const CreateListForm = () => {
                       <Plus className="w-5 h-5" />
                     )
                   }
-                </button>
+                </Button>
+                <Button
+                  className="text-white transition-all w-full text-sm"
+                  disabled={isPending}
+                  variant="destructive"
+                  size="xs"
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    disableEditing()
+                  }}
+                >
+                  Cancel
+                </Button>
               </form>
             </Form>
           </div>
@@ -115,8 +135,7 @@ export const CreateListForm = () => {
             <span>Create New List</span>
           </div>
         )
-
       }
-    </div>
+    </div >
   )
 }
