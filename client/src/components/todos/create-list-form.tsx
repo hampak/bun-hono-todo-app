@@ -58,7 +58,7 @@ export const CreateListForm = () => {
 
   return (
     <div
-      className={cn("w-60 py-1 h-14 flex justify-center items-center rounded-lg cursor-pointer transition-all select-none shrink-0 bg-gray-100 hover:bg-gray-100/50")}
+      className={cn("w-60 py-2 flex justify-center items-center rounded-lg cursor-pointer transition-all select-none shrink-0 bg-gray-100 hover:bg-gray-100/50 h-max")}
       onClick={enableEditing}
     >
       {
@@ -66,11 +66,12 @@ export const CreateListForm = () => {
           <div className="w-full h-full flex items-center px-1 shrink-0">
             <Form {...form}>
               <form
-                className="w-full flex items-center"
+                className="w-full flex items-center relative"
                 onSubmit={form.handleSubmit(handleSubmit)}
                 ref={formRef}
+              // onBlur={disableEditing}
               >
-                <div className="w-full relative">
+                <div className="w-full">
                   <FormField
                     control={form.control}
                     name="title"
@@ -84,29 +85,28 @@ export const CreateListForm = () => {
                               className="pr-8"
                               disabled={isPending}
                               ref={inputRef}
-                              onBlur={disableEditing}
+                            // onBlur={disableEditing}
                             />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
-                        <button
-                          className="absolute right-2 top-2.5 text-black hover:text-gray-500 transition-all"
-                          type="submit"
-                        // disabled={isLoading}
-                        >
-                          {
-                            isPending ? (
-                              <Loader2 className="h-5 w-5 animate-spin" />
-                            ) : (
-                              <Plus className="w-5 h-5" />
-                            )
-                          }
-                        </button>
                       </>
                     )}
                   />
-
                 </div>
+                <button
+                  className="absolute right-2 top-2.5 text-black hover:text-gray-500 transition-all"
+                  type="submit"
+                // disabled={isLoading}
+                >
+                  {
+                    isPending ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <Plus className="w-5 h-5" />
+                    )
+                  }
+                </button>
               </form>
             </Form>
           </div>
