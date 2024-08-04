@@ -1,4 +1,4 @@
-import { userQueryOptions } from '@/lib/api'
+import { userQueryOptions } from '@/lib/actions'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 

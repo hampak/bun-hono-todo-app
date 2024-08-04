@@ -1,4 +1,4 @@
-import { createListAction } from "@/lib/api";
+import { createListAction } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -15,9 +15,9 @@ import { Input } from "../ui/input";
 
 export const CreateListForm = () => {
 
-  const queryClient = useQueryClient()
-  const [isEditing, setIsEditing] = useState(false)
 
+  const [isEditing, setIsEditing] = useState(false)
+  const queryClient = useQueryClient()
   const formRef = useRef<ElementRef<"form">>(null)
   const inputRef = useRef<ElementRef<"input">>(null)
 
