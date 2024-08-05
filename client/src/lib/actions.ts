@@ -1,7 +1,9 @@
-import { CreateList } from "@server/sharedTypes";
+import { CreateList, EditList } from "@server/sharedTypes";
 import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "./api";
 import { toast } from "sonner";
+import { FieldValues, UseFormProps, UseFormReset, UseFormReturn } from "react-hook-form";
+import { EditListFormValues } from "@/components/todos/list-header";
 
 async function getCurrentUser() {
   const res = await api.me.$get();
@@ -18,6 +20,8 @@ export const userQueryOptions = queryOptions({
   staleTime: Infinity,
 });
 
+
+// create list
 export function useCreateList(options: {
   disableEditing?: () => void;
   onSuccess?: () => void;
@@ -51,6 +55,7 @@ export function useCreateList(options: {
   })
 }
 
+// get all list of specific user
 export function useGetLists() {
   return useQuery({
     queryKey: ["get-list"],
@@ -72,5 +77,32 @@ export function useGetLists() {
         allLists
       }
     }
+  })
+}
+
+// update list title of specific list
+export function useEditList() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationKey: ["edit-list"],
+    mutationFn: async ({ value }: { value: EditList }) => {
+      const res = await api.lists.$put({
+        json: value
+      })
+
+      if (!res.ok) {
+        throw new Error("server error")
+      }
+
+      const { message, updatedTitle } = await res.json();
+      return {
+        message,
+        updatedTitle
+      }
+    },
+    onSuccess: ({ message, updatedTitle }) => {
+      toast.success(message)
+      queryClient.invalidateQueries()
+    },
   })
 }

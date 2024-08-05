@@ -14,7 +14,7 @@ function Root() {
   return (
     <div className="h-full w-full">
       <Outlet />
-      <Toaster />
+      <Toaster richColors />
     </div>
   )
 }
