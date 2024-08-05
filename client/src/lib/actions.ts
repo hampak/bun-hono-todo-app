@@ -1,9 +1,7 @@
 import { CreateList, EditList } from "@server/sharedTypes";
 import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "./api";
 import { toast } from "sonner";
-import { FieldValues, UseFormProps, UseFormReset, UseFormReturn } from "react-hook-form";
-import { EditListFormValues } from "@/components/todos/list-header";
+import { api } from "./api";
 
 async function getCurrentUser() {
   const res = await api.me.$get();
@@ -94,13 +92,12 @@ export function useEditList() {
         throw new Error("server error")
       }
 
-      const { message, updatedTitle } = await res.json();
+      const { message } = await res.json();
       return {
-        message,
-        updatedTitle
+        message
       }
     },
-    onSuccess: ({ message, updatedTitle }) => {
+    onSuccess: ({ message }) => {
       toast.success(message)
       queryClient.invalidateQueries()
     },

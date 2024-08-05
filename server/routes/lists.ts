@@ -66,7 +66,6 @@ export const listsRoute = new Hono()
         })
       return c.json({
         message: `Updated list name to ${updatedTitle[0].updatedTitle}`,
-        updatedTitle
       }, 200)
     } catch (error) {
       return c.json({

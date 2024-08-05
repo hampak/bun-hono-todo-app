@@ -1,12 +1,13 @@
+import { useEditList } from "@/lib/actions"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { EditList, editListSchema } from "@server/sharedTypes"
 import { ElementRef, useEffect, useRef, useState } from "react"
-import { Input } from "../ui/input"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 import { Button } from "../ui/button"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form"
-import { useForm } from "react-hook-form"
-import { EditList, editListSchema } from "@server/sharedTypes"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { useEditList } from "@/lib/actions"
+import { Input } from "../ui/input"
+import { toast } from "sonner"
 
 interface ListHeaderProps {
   title: string
@@ -58,10 +59,17 @@ export const ListHeader = ({ title, listId }: ListHeaderProps) => {
     };
   })
 
-  const { mutate: editList, isPending } = useEditList({ form })
+  const { mutate: editList, isPending, } = useEditList()
 
   const handleSubmit = async (value: EditList) => {
-    editList({ value })
+    editList({ value }, {
+      onSuccess: () => {
+        form.reset({
+          title: value.title
+        })
+        disableEditing()
+      }
+    })
   }
 
   return (
